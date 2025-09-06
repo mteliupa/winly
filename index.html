@@ -47,6 +47,7 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: 0 0 10px rgba(255, 70, 85, 0.5);
+            cursor: pointer;
         }
         
         nav ul {
@@ -64,6 +65,7 @@
             font-weight: bold;
             transition: color 0.3s;
             position: relative;
+            cursor: pointer;
         }
         
         nav ul li a:hover {
@@ -171,6 +173,7 @@
             transition: transform 0.3s, box-shadow 0.3s;
             position: relative;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
         }
         
         .character-card:hover {
@@ -251,6 +254,7 @@
             margin: 0 15px;
             text-decoration: none;
             transition: color 0.3s;
+            cursor: pointer;
         }
         
         .footer-links a:hover {
@@ -280,18 +284,77 @@
                 margin: 5px 0;
             }
         }
+
+        /* Модальне вікно */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            overflow: auto;
+        }
+        
+        .modal-content {
+            background-color: var(--card-bg-color);
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 700px;
+            width: 80%;
+            position: relative;
+            box-shadow: 0 0 30px rgba(255, 70, 85, 0.3);
+            animation: modalFade 0.3s;
+        }
+        
+        @keyframes modalFade {
+            from {opacity: 0; transform: translateY(-50px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+        
+        .close-button {
+            color: var(--secondary-text);
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .close-button:hover {
+            color: var(--accent-color);
+        }
+        
+        .modal-header {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--secondary-text);
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 2rem;
+            color: var(--accent-color);
+        }
+        
+        .modal-body {
+            line-height: 1.6;
+            padding: 10px 0;
+        }
     </style>
 </head>
 <body>
     <header>
-        <div class="logo">GamingWiki</div>
+        <div class="logo" onclick="scrollToTop()">GamingWiki</div>
         <nav>
             <ul>
-                <li><a href="#">Головна</a></li>
-                <li><a href="#">Персонажі</a></li>
-                <li><a href="#">Ігри</a></li>
-                <li><a href="#">Новини</a></li>
-                <li><a href="#">Контакти</a></li>
+                <li><a onclick="scrollToTop()">Головна</a></li>
+                <li><a onclick="scrollToSection('characters')">Персонажі</a></li>
+                <li><a onclick="showModal('games')">Ігри</a></li>
+                <li><a onclick="showModal('news')">Новини</a></li>
+                <li><a onclick="showModal('contacts')">Контакти</a></li>
             </ul>
         </nav>
     </header>
@@ -299,13 +362,13 @@
     <section class="hero">
         <h1>Енциклопедія ігрових легенд</h1>
         <p>Відкрийте для себе всесвіт найвідоміших персонажів відеоігор - від Дикого Заходу до сучасних мегаполісів</p>
-        <button class="cta-button">Досліджувати</button>
+        <button class="cta-button" onclick="scrollToSection('characters')">Досліджувати</button>
     </section>
 
-    <section class="characters">
+    <section id="characters" class="characters">
         <h2 class="section-title">Популярні персонажі</h2>
         <div class="character-grid">
-            <div class="character-card">
+            <div class="character-card" onclick="showCharacterModal('arthur')">
                 <div class="character-image">Артур Морган (Red Dead Redemption 2)</div>
                 <div class="character-content">
                     <h3 class="character-name">Артур Морган</h3>
@@ -314,7 +377,7 @@
                 </div>
             </div>
 
-            <div class="character-card">
+            <div class="character-card" onclick="showCharacterModal('terrorist')">
                 <div class="character-image">Терорист (Counter-Strike 2)</div>
                 <div class="character-content">
                     <h3 class="character-name">Терорист</h3>
@@ -323,7 +386,7 @@
                 </div>
             </div>
 
-            <div class="character-card">
+            <div class="character-card" onclick="showCharacterModal('jonesy')">
                 <div class="character-image">Скін з Fortnite</div>
                 <div class="character-content">
                     <h3 class="character-name">Джонсі</h3>
@@ -332,7 +395,7 @@
                 </div>
             </div>
 
-            <div class="character-card">
+            <div class="character-card" onclick="showCharacterModal('franklin')">
                 <div class="character-image">Франклін Клінтон</div>
                 <div class="character-content">
                     <h3 class="character-name">Франклін Клінтон</h3>
@@ -341,7 +404,7 @@
                 </div>
             </div>
 
-            <div class="character-card">
+            <div class="character-card" onclick="showCharacterModal('john')">
                 <div class="character-image">Джон Марстон</div>
                 <div class="character-content">
                     <h3 class="character-name">Джон Марстон</h3>
@@ -350,7 +413,7 @@
                 </div>
             </div>
 
-            <div class="character-card">
+            <div class="character-card" onclick="showCharacterModal('specialist')">
                 <div class="character-image">Спіціаліст</div>
                 <div class="character-content">
                     <h3 class="character-name">Спіціаліст</h3>
@@ -368,13 +431,269 @@
 
     <footer>
         <div class="footer-links">
-            <a href="#">Про нас</a>
-            <a href="#">Умови використання</a>
-            <a href="#">Політика конфіденційності</a>
-            <a href="#">Реклама</a>
-            <a href="#">Контакти</a>
+            <a onclick="showModal('about')">Про нас</a>
+            <a onclick="showModal('terms')">Умови використання</a>
+            <a onclick="showModal('privacy')">Політика конфіденційності</a>
+            <a onclick="showModal('advertisement')">Реклама</a>
+            <a onclick="showModal('contacts')">Контакти</a>
         </div>
         <div class="copyright">© 2023 GamingWiki. Усі права захищені.</div>
     </footer>
+
+    <!-- Модальне вікно -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal()">&times;</span>
+            <div class="modal-header">
+                <h2 id="modal-title" class="modal-title">Заголовок</h2>
+            </div>
+            <div id="modal-body" class="modal-body">
+                <p>Тут буде вміст модального вікна.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Функція для прокрутки до верхньої частини сторінки
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // Функція для прокрутки до певного розділу
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+        
+        // Функції для роботи з модальним вікном
+        const modal = document.getElementById('modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalBody = document.getElementById('modal-body');
+        
+        function showModal(type) {
+            // Встановлюємо заголовок і вміст в залежності від типу
+            switch(type) {
+                case 'games':
+                    modalTitle.textContent = 'Ігри';
+                    modalBody.innerHTML = `
+                        <p>У нашій базі знаходяться інформація про сотні ігрових всесвітів. Ось деякі з них:</p>
+                        <ul>
+                            <li>Red Dead Redemption 2</li>
+                            <li>Counter-Strike 2</li>
+                            <li>Fortnite</li>
+                            <li>Grand Theft Auto V</li>
+                            <li>Call of Duty</li>
+                        </ul>
+                        <p>Скоро ми додамо можливість фільтрації ігор за жанром, платформою та роком випуску.</p>
+                    `;
+                    break;
+                case 'news':
+                    modalTitle.textContent = 'Новини';
+                    modalBody.innerHTML = `
+                        <p>Останні оновлення в ігровому світі:</p>
+                        <ul>
+                            <li>Анонсовано нову частину Red Dead Redemption - очікуйте у 2024 році</li>
+                            <li>Counter-Strike 2 оновлено до версії 2.1 з новими картами</li>
+                            <li>Fortnite оголосив про колаборацію з Marvel у новому сезоні</li>
+                            <li>GTA VI вийде у 2025 році - перші деталі сюжету</li>
+                        </ul>
+                        <p>Підпишіться на нашу розсилку, щоб отримувати останні новини першими!</p>
+                    `;
+                    break;
+                case 'contacts':
+                    modalTitle.textContent = 'Контакти';
+                    modalBody.innerHTML = `
+                        <p>Зв'яжіться з нами:</p>
+                        <p>Email: info@gamingwiki.com</p>
+                        <p>Телефон: +380 (XX) XXX-XX-XX</p>
+                        <p>Адреса: м. Київ, вул. Ігрова, 7</p>
+                        <p>Соціальні мережі:</p>
+                        <ul>
+                            <li>Facebook: /gamingwiki</li>
+                            <li>Twitter: @gamingwiki</li>
+                            <li>Instagram: @gamingwiki</li>
+                        </ul>
+                    `;
+                    break;
+                case 'about':
+                    modalTitle.textContent = 'Про нас';
+                    modalBody.innerHTML = `
+                        <p>GamingWiki - це енциклопедія ігрових всесвітів, створена фанатами для фанатів.</p>
+                        <p>Наша мета - зібрати найповнішу інформацію про персонажів, ігрові світи та сюжети найпопулярніших відеоігор.</p>
+                        <p>Ми працюємо з 2018 року і постійно розширюємо нашу базу даних.</p>
+                        <p>Приєднуйтесь до нашої спільноти і допоможіть нам розвивати проект!</p>
+                    `;
+                    break;
+                case 'terms':
+                    modalTitle.textContent = 'Умови використання';
+                    modalBody.innerHTML = `
+                        <p>Умови використання сайту GamingWiki:</p>
+                        <ol>
+                            <li>Всі матеріали на сайті належать їх авторам та розповсюджуються на умовах ліцензії Creative Commons.</li>
+                            <li>Заборонено копіювання матеріалів без посилання на джерело.</li>
+                            <li>Коментарі та доповнення проходять модерацію.</li>
+                            <li>Адміністрація сайту не несе відповідальності за точність інформації, наданої користувачами.</li>
+                        </ol>
+                    `;
+                    break;
+                case 'privacy':
+                    modalTitle.textContent = 'Політика конфіденційності';
+                    modalBody.innerHTML = `
+                        <p>Ми поважаємо вашу конфіденційність і дотримуємося політики захисту персональних даних.</p>
+                        <p>Ми збираємо лише ту інформацію, яку ви надаєте добровільно при реєстрації або підписці на розсилку.</p>
+                        <p>Ваші дані не передаються третім особам і використовуються виключно для покращення якості нашого сервісу.</p>
+                    `;
+                    break;
+                case 'advertisement':
+                    modalTitle.textContent = 'Реклама';
+                    modalBody.innerHTML = `
+                        <p>Зацікавлені у співпраці з нами?</p>
+                        <p>Наш сайт відвідують десятки тисяч гравців щомісяця.</p>
+                        <p>Пропонуємо такі формати співпраці:</p>
+                        <ul>
+                            <li>Розміщення банерної реклами</li>
+                            <li>Нативні інтеграції в контент</li>
+                            <li>Спеціальні проекти та конкурси</li>
+                            <li>Обзорні статті про ігри</li>
+                        </ul>
+                        <p>Зв'яжіться з нами за адресою advertising@gamingwiki.com для обговорення деталей.</p>
+                    `;
+                    break;
+                default:
+                    modalTitle.textContent = 'GamingWiki';
+                    modalBody.innerHTML = `<p>Ласкаво просимо до енциклопедії ігрових легенд!</p>`;
+            }
+            
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden'; // Заборонити прокрутку тла
+        }
+        
+        function closeModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto'; // Дозволити прокрутку тла
+        }
+        
+        // Закрити модальне вікно при кліку поза ним
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+        
+        // Функція для показу модального вікна з інформацією про персонажа
+        function showCharacterModal(characterId) {
+            let title = '';
+            let content = '';
+            
+            switch(characterId) {
+                case 'arthur':
+                    title = 'Артур Морган';
+                    content = `
+                        <p><strong>Гра:</strong> Red Dead Redemption 2</p>
+                        <p><strong>Рік випуску:</strong> 2018</p>
+                        <p><strong>Розробник:</strong> Rockstar Games</p>
+                        <p><strong>Особливості:</strong></p>
+                        <ul>
+                            <li>Майстерний стрілець і вершник</li>
+                            <li>Член банди Ван дер Лінде</li>
+                            <li>Бореться з моральними дилемами в умовах змінюючогося світу</li>
+                            <li>Має систему честі, що впливає на сюжет</li>
+                        </ul>
+                        <p>Артур Морган - один з найбільш пророблених персонажів в історії відеоігор, який демонструє складний внутрішній конфлікт між вірністю своїй банді та власними моральними принципами.</p>
+                    `;
+                    break;
+                case 'terrorist':
+                    title = 'Терорист';
+                    content = `
+                        <p><strong>Гра:</strong> Counter-Strike 2</p>
+                        <p><strong>Рік випуску:</strong> 2023</p>
+                        <p><strong>Розробник:</strong> Valve</p>
+                        <p><strong>Особливості:</strong></p>
+                        <ul>
+                            <li>Один з двох основних класів персонажів</li>
+                            <li>Спеціалізується на закладанні бомб та проведенні терористичних актів</li>
+                            <li>Має унікальні моделі для різних регіонів</li>
+                            <li>Кооперативний геймплей в команді</li>
+                        </ul>
+                        <p>Терористи в Counter-Strike представляють різні терористичні угруповання з усього світу, кожне з яких має свою унікальну зовнішність та історію.</p>
+                    `;
+                    break;
+                case 'jonesy':
+                    title = 'Джонсі';
+                    content = `
+                        <p><strong>Гра:</strong> Fortnite</p>
+                        <p><strong>Рік випуску:</strong> 2017</p>
+                        <p><strong>Розробник:</strong> Epic Games</p>
+                        <p><strong>Особливості:</strong></p>
+                        <ul>
+                            <li>Один з найпопулярніших скінів у Fortnite</li>
+                            <li>З'явився в рамках співпраці з всесвітом Batman</li>
+                            <li>Став символом гри та інтернет-мемом</li>
+                            <li>Маєnumerous варіації та стилі</li>
+                        </ul>
+                        <p>Джонсі - не просто скін, а культова фігура в спільноті Fortnite. Він став настільки популярним, що з'явився в численних медіа та мерчі.</p>
+                    `;
+                    break;
+                case 'franklin':
+                    title = 'Франклін Клінтон';
+                    content = `
+                        <p><strong>Гра:</strong> Grand Theft Auto V</p>
+                        <p><strong>Рік випуску:</strong> 2013</p>
+                        <p><strong>Розробник:</strong> Rockstar Games</p>
+                        <p><strong>Особливості:</strong></p>
+                        <ul>
+                            <li>Молодий вуличний злодій</li>
+                            <li>Спеціалізується на водінні та перестрілках</li>
+                            <li>Один з трьох головних протагоністів</li>
+                            <li>Намагається знайти своє місце у великому місті</li>
+                        </ul>
+                        <p>Франклін представляє молоде покоління злочинців, які намагаються піднятися з низів соціуму. Його історія демонструє складність вибору між злочинним життям і легальним шляхом.</p>
+                    `;
+                    break;
+                case 'john':
+                    title = 'Джон Марстон';
+                    content = `
+                        <p><strong>Гра:</strong> Red Dead Redemption</p>
+                        <p><strong>Рік випуску:</strong> 2010</p>
+                        <p><strong>Розробник:</strong> Rockstar Games</p>
+                        <p><strong>Особливості:</strong></p>
+                        <ul>
+                            <li>Колишній злочинець, який намагається виправити помилки минулого</li>
+                            <li>Майстерний стрілець</li>
+                            <li>Наставник Артура Моргана</li>
+                            <li>Головний герой першої Red Dead Redemption</li>
+                        </ul>
+                        <p>Джон Марстон - трагічний герой, який намагається втекти від свого минулого, але змушений повернутися до навичок злочинця, щоб захистити свою сім'ю. Його історія досліджує теми спокути та наслідків минулих вчинків.</p>
+                    `;
+                    break;
+                case 'specialist':
+                    title = 'Спіціаліст';
+                    content = `
+                        <p><strong>Гра:</strong> Call of Duty</p>
+                        <p><strong>Рік випуску:</strong> 2003 (серія)</p>
+                        <p><strong>Розробник:</strong> Infinity Ward, Treyarch, Sledgehammer Games</p>
+                        <p><strong>Особливості:</strong></p>
+                        <ul>
+                            <li>Елітний солдат спецпідрозділу</li>
+                            <li>Бере участь у найнебезпечніших операціях по всьому світу</li>
+                            <li>Володіє унікальними навичками та спеціальним обладнанням</li>
+                            <li>Має доступ до передової зброї та технологій</li>
+                        </ul>
+                        <p>Спіціалісти в Call of Duty представляють елітних солдатів з різних країн та спецпідрозділів. Вони є уособленням професійних якостей сучасних солдатів - дисциплінованість, підготовка та відданість місії.</p>
+                    `;
+                    break;
+                default:
+                    title = 'Персонаж';
+                    content = `<p>Інформація про цього персонажа готується до публікації.</p>`;
+            }
+            
+            modalTitle.textContent = title;
+            modalBody.innerHTML = content;
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+    </script>
 </body>
 </html>
