@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gaming Legends Wiki</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        :root {
+            --main-bg-color: #0d1117;
+            --card-bg-color: #161b22;
+            --accent-color: #ff4655;
+            --text-color: #f0f6fc;
+            --secondary-text: #8b949e;
+        }
+        
+        body {
+            background-color: var(--main-bg-color);
+            color: var(--text-color);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%230d1117"/><path d="M0 0L100 100" stroke="%23161b22" stroke-width="1"/><path d="M100 0L0 100" stroke="%23161b22" stroke-width="1"/></svg>');
+            overflow-x: hidden;
+        }
+        
+        header {
+            background: linear-gradient(to right, #000000, #220000);
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            border-bottom: 2px solid var(--accent-color);
+        }
+        
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff4655, #ff7846);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px rgba(255, 70, 85, 0.5);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 25px;
+        }
+        
+        nav ul li a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+            position: relative;
+        }
+        
+        nav ul li a:hover {
+            color: var(--accent-color);
+        }
+        
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--accent-color);
+            transition: width 0.3s;
+        }
+        
+        nav ul li a:hover::after {
+            width: 100%;
+        }
+        
+        .hero {
+            height: 80vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23161b22"/><path d="M0 0L100 100" stroke="%23ff4655" stroke-width="2"/><path d="M100 0L0 100" stroke="%23ff4655" stroke-width="2"/></svg>');
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+            position: relative;
+        }
+        
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            background: linear-gradient(45deg, #ff4655, #ff7846, #ff4655);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hero p {
+            font-size: 1.5rem;
+            max-width: 800px;
+            margin-bottom: 30px;
+            color: var(--secondary-text);
+        }
+        
+        .cta-button {
+            background: linear-gradient(45deg, #ff4655, #ff7846);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255, 70, 85, 0.4);
+        }
+        
+        .characters {
+            padding: 80px 5%;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 60px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(to right, #ff4655, #ff7846);
+            border-radius: 2px;
+        }
+        
+        .character-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .character-card {
+            background-color: var(--card-bg-color);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .character-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+        
+        .character-image {
+            height: 250px;
+            background: linear-gradient(45deg, #222, #444);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--secondary-text);
+            font-size: 1.2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .character-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(255, 70, 85, 0.2), rgba(255, 120, 70, 0.2));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .character-card:hover .character-image::before {
+            opacity: 1;
+        }
+        
+        .character-content {
+            padding: 20px;
+        }
+        
+        .character-name {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: var(--accent-color);
+        }
+        
+        .character-game {
+            color: var(--secondary-text);
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+        
+        .character-description {
+            line-height: 1.6;
+        }
+        
+        .coming-soon {
+            padding: 80px 5%;
+            text-align: center;
+            background-color: rgba(255, 70, 85, 0.05);
+        }
+        
+        footer {
+            background-color: #000;
+            padding: 40px 5%;
+            text-align: center;
+            border-top: 2px solid var(--accent-color);
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: var(--secondary-text);
+            margin: 0 15px;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--accent-color);
+        }
+        
+        .copyright {
+            color: var(--secondary-text);
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.2rem;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: flex-end;
+            }
+            
+            nav ul li {
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">GamingWiki</div>
+        <nav>
+            <ul>
+                <li><a href="#">Головна</a></li>
+                <li><a href="#">Персонажі</a></li>
+                <li><a href="#">Ігри</a></li>
+                <li><a href="#">Новини</a></li>
+                <li><a href="#">Контакти</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h1>Енциклопедія ігрових легенд</h1>
+        <p>Відкрийте для себе всесвіт найвідоміших персонажів відеоігор - від Дикого Заходу до сучасних мегаполісів</p>
+        <button class="cta-button">Досліджувати</button>
+    </section>
+
+    <section class="characters">
+        <h2 class="section-title">Популярні персонажі</h2>
+        <div class="character-grid">
+            <div class="character-card">
+                <div class="character-image">Артур Морган (Red Dead Redemption 2)</div>
+                <div class="character-content">
+                    <h3 class="character-name">Артур Морган</h3>
+                    <div class="character-game">Red Dead Redemption 2</div>
+                    <p class="character-description">Головний герой Red Dead Redemption 2, член банди Ван дер Лінде. Майстерний стрілець і вершник, який бореться з моральними дилемами в умовах змінюючогося світу.</p>
+                </div>
+            </div>
+
+            <div class="character-card">
+                <div class="character-image">Терорист (Counter-Strike 2)</div>
+                <div class="character-content">
+                    <h3 class="character-name">Терорист</h3>
+                    <div class="character-game">Counter-Strike 2</div>
+                    <p class="character-description">Один з класичних персонажів серії Counter-Strike. Представник терористичної угруповання, що спеціалізується на закладанні бомб та проведенні терористичних актів.</p>
+                </div>
+            </div>
+
+            <div class="character-card">
+                <div class="character-image">Скін з Fortnite</div>
+                <div class="character-content">
+                    <h3 class="character-name">Джонсі</h3>
+                    <div class="character-game">Fortnite</div>
+                    <p class="character-description">Один з найпопулярніших скінів у Fortnite, який став символом гри. З'явився в рамках співпраці з всесвітом Batman, але швидко набрав власної популярності.</p>
+                </div>
+            </div>
+
+            <div class="character-card">
+                <div class="character-image">Франклін Клінтон</div>
+                <div class="character-content">
+                    <h3 class="character-name">Франклін Клінтон</h3>
+                    <div class="character-game">Grand Theft Auto V</div>
+                    <p class="character-description">Молодий вуличний злодій, який намагається знайти своє місце у великому місті. Один з трьох головних протагоністів Grand Theft Auto V, який спеціалізується на водінні та перестрілках.</p>
+                </div>
+            </div>
+
+            <div class="character-card">
+                <div class="character-image">Джон Марстон</div>
+                <div class="character-content">
+                    <h3 class="character-name">Джон Марстон</h3>
+                    <div class="character-game">Red Dead Redemption</div>
+                    <p class="character-description">Колишній злочинець, який намагається знайти спокій і виправити свої помилки минулого. Протагоніст першої Red Dead Redemption, наставник Артура Моргана.</p>
+                </div>
+            </div>
+
+            <div class="character-card">
+                <div class="character-image">Спіціаліст</div>
+                <div class="character-content">
+                    <h3 class="character-name">Спіціаліст</h3>
+                    <div class="character-game">Call of Duty</div>
+                    <p class="character-description">Елітний солдат спецпідрозділу, який бере участь у найнебезпечніших операціях по всьому світу. Володіє унікальними навичками та спеціальним обладнанням.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="coming-soon">
+        <h2 class="section-title">Очікуйте оновлення</h2>
+        <p>Ми постійно додаємо нових персонажів та інформацію про світи найпопулярніших ігор</p>
+    </section>
+
+    <footer>
+        <div class="footer-links">
+            <a href="#">Про нас</a>
+            <a href="#">Умови використання</a>
+            <a href="#">Політика конфіденційності</a>
+            <a href="#">Реклама</a>
+            <a href="#">Контакти</a>
+        </div>
+        <div class="copyright">© 2023 GamingWiki. Усі права захищені.</div>
+    </footer>
+</body>
+</html>
