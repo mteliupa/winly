@@ -89,9 +89,10 @@
         
         .hero {
             height: 80vh;
-            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
-                        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23161b22"/><path d="M0 0L100 100" stroke="%23ff4655" stroke-width="2"/><path d="M100 0L0 100" stroke="%23ff4655" stroke-width="2"/></svg>');
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7));
             background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -99,6 +100,21 @@
             text-align: center;
             padding: 0 20px;
             position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23161b22"/><path d="M0 0L100 100" stroke="%23ff4655" stroke-width="2"/><path d="M100 0L0 100" stroke="%23ff4655" stroke-width="2"/></svg>');
+            background-attachment: fixed;
+            background-size: 100px;
+            z-index: -1;
+            transform: translateZ(-10px) scale(2);
         }
         
         .hero h1 {
@@ -108,6 +124,7 @@
             background: linear-gradient(45deg, #ff4655, #ff7846, #ff4655);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            animation: fadeIn 1s ease-out;
         }
         
         .hero p {
@@ -115,6 +132,7 @@
             max-width: 800px;
             margin-bottom: 30px;
             color: var(--secondary-text);
+            animation: fadeIn 1.5s ease-out;
         }
         
         .cta-button {
@@ -129,11 +147,42 @@
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 1px;
+            animation: fadeIn 2s ease-out;
         }
         
         .cta-button:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(255, 70, 85, 0.4);
+        }
+        
+        .games-filter {
+            padding: 40px 5%;
+            background-color: rgba(22, 27, 34, 0.8);
+        }
+        
+        .games-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .game-button {
+            background: var(--card-bg-color);
+            border: 2px solid transparent;
+            color: var(--text-color);
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        
+        .game-button:hover, .game-button.active {
+            background: linear-gradient(45deg, #ff4655, #ff7846);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 70, 85, 0.3);
         }
         
         .characters {
@@ -193,6 +242,17 @@
             overflow: hidden;
         }
         
+        .character-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .character-card:hover .character-image img {
+            transform: scale(1.1);
+        }
+        
         .character-image::before {
             content: '';
             position: absolute;
@@ -203,6 +263,7 @@
             background: linear-gradient(45deg, rgba(255, 70, 85, 0.2), rgba(255, 120, 70, 0.2));
             opacity: 0;
             transition: opacity 0.3s;
+            z-index: 1;
         }
         
         .character-card:hover .character-image::before {
@@ -283,6 +344,15 @@
             nav ul li {
                 margin: 5px 0;
             }
+            
+            .games-container {
+                gap: 10px;
+            }
+            
+            .game-button {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
         }
 
         /* Модальне вікно */
@@ -315,6 +385,11 @@
             to {opacity: 1; transform: translateY(0);}
         }
         
+        @keyframes fadeIn {
+            from {opacity: 0; transform: translateY(20px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+        
         .close-button {
             color: var(--secondary-text);
             float: right;
@@ -343,6 +418,25 @@
             line-height: 1.6;
             padding: 10px 0;
         }
+        
+        .modal-character-image {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(45deg, #222, #444);
+            margin-bottom: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .modal-character-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -351,8 +445,8 @@
         <nav>
             <ul>
                 <li><a onclick="scrollToTop()">Головна</a></li>
+                <li><a onclick="scrollToSection('games-filter')">Ігри</a></li>
                 <li><a onclick="scrollToSection('characters')">Персонажі</a></li>
-                <li><a onclick="showModal('games')">Ігри</a></li>
                 <li><a onclick="showModal('news')">Новини</a></li>
                 <li><a onclick="showModal('contacts')">Контакти</a></li>
             </ul>
@@ -362,14 +456,35 @@
     <section class="hero">
         <h1>Енциклопедія ігрових легенд</h1>
         <p>Відкрийте для себе всесвіт найвідоміших персонажів відеоігор - від Дикого Заходу до сучасних мегаполісів</p>
-        <button class="cta-button" onclick="scrollToSection('characters')">Досліджувати</button>
+        <button class="cta-button" onclick="scrollToSection('games-filter')">Досліджувати</button>
+    </section>
+
+    <section id="games-filter" class="games-filter">
+        <h2 class="section-title">Оберіть гру</h2>
+        <div class="games-container">
+            <button class="game-button active" data-game="all">Всі ігри</button>
+            <button class="game-button" data-game="rdr2">Red Dead Redemption 2</button>
+            <button class="game-button" data-game="cs2">Counter-Strike 2</button>
+            <button class="game-button" data-game="fortnite">Fortnite</button>
+            <button class="game-button" data-game="gta5">GTA V</button>
+            <button class="game-button" data-game="cod">Call of Duty</button>
+            <button class="game-button" data-game="witcher">The Witcher</button>
+            <button class="game-button" data-game="skyrim">Skyrim</button>
+            <button class="game-button" data-game="fallout">Fallout</button>
+            <button class="game-button" data-game="mass-effect">Mass Effect</button>
+            <button class="game-button" data-game="ac">Assassin's Creed</button>
+            <button class="game-button" data-game="zelda">The Legend of Zelda</button>
+        </div>
     </section>
 
     <section id="characters" class="characters">
         <h2 class="section-title">Популярні персонажі</h2>
         <div class="character-grid">
-            <div class="character-card" onclick="showCharacterModal('arthur')">
-                <div class="character-image">Артур Морган (Red Dead Redemption 2)</div>
+            <!-- Red Dead Redemption 2 -->
+            <div class="character-card" data-game="rdr2" onclick="showCharacterModal('arthur')">
+                <div class="character-image">
+                    <div class="image-placeholder">Артур Морган</div>
+                </div>
                 <div class="character-content">
                     <h3 class="character-name">Артур Морган</h3>
                     <div class="character-game">Red Dead Redemption 2</div>
@@ -377,8 +492,22 @@
                 </div>
             </div>
 
-            <div class="character-card" onclick="showCharacterModal('terrorist')">
-                <div class="character-image">Терорист (Counter-Strike 2)</div>
+            <div class="character-card" data-game="rdr2" onclick="showCharacterModal('dutch')">
+                <div class="character-image">
+                    <div class="image-placeholder">Датч ван дер Лінде</div>
+                </div>
+                <div class="character-content">
+                    <h3 class="character-name">Датч ван дер Лінде</h3>
+                    <div class="character-game">Red Dead Redemption 2</div>
+                    <p class="character-description">Лідер банди Ван дер Лінде, харизматичний ідейний натхненник, який поступово втрачає зв'язок з реальністю під тиском зовнішніх обставин.</p>
+                </div>
+            </div>
+
+            <!-- Counter-Strike 2 -->
+            <div class="character-card" data-game="cs2" onclick="showCharacterModal('terrorist')">
+                <div class="character-image">
+                    <div class="image-placeholder">Терорист</div>
+                </div>
                 <div class="character-content">
                     <h3 class="character-name">Терорист</h3>
                     <div class="character-game">Counter-Strike 2</div>
@@ -386,8 +515,22 @@
                 </div>
             </div>
 
-            <div class="character-card" onclick="showCharacterModal('jonesy')">
-                <div class="character-image">Скін з Fortnite</div>
+            <div class="character-card" data-game="cs2" onclick="showCharacterModal('counter-terrorist')">
+                <div class="character-image">
+                    <div class="image-placeholder">Контр-терорист</div>
+                </div>
+                <div class="character-content">
+                    <h3 class="character-name">Контр-терорист</h3>
+                    <div class="character-game">Counter-Strike 2</div>
+                    <p class="character-description">Елітний боець спецпідрозділу, який спеціалізується на нейтралізації терористів, знешкодженні бомб та порятунку заручників.</p>
+                </div>
+            </div>
+
+            <!-- Fortnite -->
+            <div class="character-card" data-game="fortnite" onclick="showCharacterModal('jonesy')">
+                <div class="character-image">
+                    <div class="image-placeholder">Джонсі</div>
+                </div>
                 <div class="character-content">
                     <h3 class="character-name">Джонсі</h3>
                     <div class="character-game">Fortnite</div>
@@ -395,8 +538,22 @@
                 </div>
             </div>
 
-            <div class="character-card" onclick="showCharacterModal('franklin')">
-                <div class="character-image">Франклін Клінтон</div>
+            <div class="character-card" data-game="fortnite" onclick="showCharacterModal('peely')">
+                <div class="character-image">
+                    <div class="image-placeholder">Пілі</div>
+                </div>
+                <div class="character-content">
+                    <h3 class="character-name">Пілі</h3>
+                    <div class="character-game">Fortnite</div>
+                    <p class="character-description">Культовий персонаж у вигляді банана, який став одним з найвпізнаваніших скінів Fortnite. З'являвся в різних варіаціях та костюмах.</p>
+                </div>
+            </div>
+
+            <!-- GTA V -->
+            <div class="character-card" data-game="gta5" onclick="showCharacterModal('franklin')">
+                <div class="character-image">
+                    <div class="image-placeholder">Франклін Клінтон</div>
+                </div>
                 <div class="character-content">
                     <h3 class="character-name">Франклін Клінтон</h3>
                     <div class="character-game">Grand Theft Auto V</div>
@@ -404,21 +561,120 @@
                 </div>
             </div>
 
-            <div class="character-card" onclick="showCharacterModal('john')">
-                <div class="character-image">Джон Марстон</div>
+            <div class="character-card" data-game="gta5" onclick="showCharacterModal('michael')">
+                <div class="character-image">
+                    <div class="image-placeholder">Майкл Де Санта</div>
+                </div>
                 <div class="character-content">
-                    <h3 class="character-name">Джон Марстон</h3>
-                    <div class="character-game">Red Dead Redemption</div>
-                    <p class="character-description">Колишній злочинець, який намагається знайти спокій і виправити свої помилки минулого. Протагоніст першої Red Dead Redemption, наставник Артура Моргана.</p>
+                    <h3 class="character-name">Майкл Де Санта</h3>
+                    <div class="character-game">Grand Theft Auto V</div>
+                    <p class="character-description">Колишній професійний злочинець, який перебуває під програмою захисту свідків. Намагається вести звичайне життя, але знову потрапляє у кримінальні пригоди.</p>
                 </div>
             </div>
 
-            <div class="character-card" onclick="showCharacterModal('specialist')">
-                <div class="character-image">Спіціаліст</div>
+            <!-- Call of Duty -->
+            <div class="character-card" data-game="cod" onclick="showCharacterModal('specialist')">
+                <div class="character-image">
+                    <div class="image-placeholder">Спіціаліст</div>
+                </div>
                 <div class="character-content">
                     <h3 class="character-name">Спіціаліст</h3>
                     <div class="character-game">Call of Duty</div>
                     <p class="character-description">Елітний солдат спецпідрозділу, який бере участь у найнебезпечніших операціях по всьому світу. Володіє унікальними навичками та спеціальним обладнанням.</p>
+                </div>
+            </div>
+
+            <div class="character-card" data-game="cod" onclick="showCharacterModal('price')">
+                <div class="character-image">
+                    <div class="image-placeholder">Капітан Прайс</div>
+                </div>
+                <div class="character-content">
+                    <h3 class="character-name">Капітан Прайс</h3>
+                    <div class="character-game">Call of Duty</div>
+                    <p class="character-description">Легендарний командир спецпідрозділу SAS, який брав участь у численних секретних операціях по всьому світу. Один з найвідоміших персонажів серії.</p>
+                </div>
+            </div>
+
+            <!-- The Witcher -->
+            <div class="character-card" data-game="witcher" onclick="showCharacterModal('geralt')">
+                <div class="character-image">
+                    <div class="image-placeholder">Геральт з Рівії</div>
+                </div>
+                <div class="character-content">
+                    <h3 class="character-name">Геральт з Рівії</h3>
+                    <div class="character-game">The Witcher</div>
+                    <p class="character-description">Відьмак, мутант і професійний мисливець на монстрів. Володіє надприродними здібностями, майстерно володіє мечем і знається на зіллярстві.</p>
+                </div>
+            </div>
+
+            <div class="character-card" data-game="witcher" onclick="showCharacterModal('ciri')">
+                <div class="character-image">
+                    <div class="image-placeholder">Цірілла</div>
+                </div>
+                <div class="character-content">
+                    <h3 class="character-name">Цірілла</h3>
+                    <div class="character-game">The Witcher</div>
+                    <p class="character-description">Дитя-несподіванка, прийомна дочка Геральта. Володіє могутніми здібностями, здатна подорожувати в часі та просторі. Ключова фігура в боротьбі за світ.</p>
+                </div>
+            </div>
+
+            <!-- Skyrim -->
+            <div class="character-card" data-game="skyrim" onclick="showCharacterModal('dragonborn')">
+                <div class="character-image">
+                    <div class="image-placeholder">Довакін</div>
+                </div>
+                <div class="character-content">
+                    <h3 class="character-name">Довакін</h3>
+                    <div class="character-game">The Elder Scrolls V: Skyrim</div>
+                    <p class="character-description">Обранець долі, народжений з кров'ю драконів. Володіє унікальною здатністю використовувати голос драконів - Ту'ум. Єдиний, хто може зупинити Алдуїна.</p>
+                </div>
+            </div>
+
+            <!-- Fallout -->
+            <div class="character-card" data-game="fallout" onclick="showCharacterModal('vault-boy')">
+                <div class="character-image">
+                    <div class="image-placeholder">Хлопчик-сховище</div>
+                </div>
+                <div class="character-content">
+                    <h3 class="character-name">Хлопчик-сховище</h3>
+                    <div class="character-game">Fallout</div>
+                    <p class="character-description">Талісман серії Fallout, який зображується в різних ситуаціях для демонстрації ігрових механік. Символ післяядерного оптимізму та виживання.</p>
+                </div>
+            </div>
+
+            <!-- Mass Effect -->
+            <div class="character-card" data-game="mass-effect" onclick="showCharacterModal('shepard')">
+                <div class="character-image">
+                    <div class="image-placeholder">Командер Шепард</div>
+                </div>
+                <div class="character-content">
+                    <h3 class="character-name">Командер Шепард</h3>
+                    <div class="character-game">Mass Effect</div>
+                    <p class="character-description">Головний герой серії Mass Effect, легендарний командир космічного корабля "Нормандія". Єдиний, хто може об'єднати галактику проти загрози Жнеців.</p>
+                </div>
+            </div>
+
+            <!-- Assassin's Creed -->
+            <div class="character-card" data-game="ac" onclick="showCharacterModal('ezio')">
+                <div class="character-image">
+                    <div class="image-placeholder">Еціо Аудіторе</div>
+                </div>
+                <div class="character-content">
+                    <h3 class="character-name">Еціо Аудіторе</h3>
+                    <div class="character-game">Assassin's Creed</div>
+                    <p class="character-description">Один з найвідоміших ассасинів в історії ордену. Пройшов шлях від юнака-аристократа до мудрого Ментіора, відроджуючи орден ассасинів в Італії.</p>
+                </div>
+            </div>
+
+            <!-- The Legend of Zelda -->
+            <div class="character-card" data-game="zelda" onclick="showCharacterModal('link')">
+                <div class="character-image">
+                    <div class="image-placeholder">Лінк</div>
+                </div>
+                <div class="character-content">
+                    <h3 class="character-name">Лінк</h3>
+                    <div class="character-game">The Legend of Zelda</div>
+                    <p class="character-description">Обраний герой, який з'являється в різних втіленнях, щоб захистити королівство Хайрюл від сил зла. Володіє Мечем Погаю, що знищує зло.</p>
                 </div>
             </div>
         </div>
@@ -591,6 +847,9 @@
                 case 'arthur':
                     title = 'Артур Морган';
                     content = `
+                        <div class="modal-character-image">
+                            <div class="image-placeholder" style="display: flex; justify-content: center; align-items: center; height: 100%; color: var(--secondary-text);">Зображення Артура Моргана</div>
+                        </div>
                         <p><strong>Гра:</strong> Red Dead Redemption 2</p>
                         <p><strong>Рік випуску:</strong> 2018</p>
                         <p><strong>Розробник:</strong> Rockstar Games</p>
@@ -604,9 +863,31 @@
                         <p>Артур Морган - один з найбільш пророблених персонажів в історії відеоігор, який демонструє складний внутрішній конфлікт між вірністю своїй банді та власними моральними принципами.</p>
                     `;
                     break;
+                case 'dutch':
+                    title = 'Датч ван дер Лінде';
+                    content = `
+                        <div class="modal-character-image">
+                            <div class="image-placeholder" style="display: flex; justify-content: center; align-items: center; height: 100%; color: var(--secondary-text);">Зображення Датча ван дер Лінде</div>
+                        </div>
+                        <p><strong>Гра:</strong> Red Dead Redemption 2</p>
+                        <p><strong>Рік випуску:</strong> 2018</p>
+                        <p><strong>Розробник:</strong> Rockstar Games</p>
+                        <p><strong>Особливості:</strong></p>
+                        <ul>
+                            <li>Харизматичний лідер банди Ван дер Лінде</li>
+                            <li>Ідейний натхненник і стратег</li>
+                            <li>Поступово втрачає зв'язок з реальністю</li>
+                            <li>Має талант переконувати людей</li>
+                        </ul>
+                        <p>Датч ван дер Лінде - складний персонаж, який починає як харизматичний лідер, але під тиском обставин поступово сходить з розуму, що призводить до трагічних наслідків для всієї банди.</p>
+                    `;
+                    break;
                 case 'terrorist':
                     title = 'Терорист';
                     content = `
+                        <div class="modal-character-image">
+                            <div class="image-placeholder" style="display: flex; justify-content: center; align-items: center; height: 100%; color: var(--secondary-text);">Зображення Терориста</div>
+                        </div>
                         <p><strong>Гра:</strong> Counter-Strike 2</p>
                         <p><strong>Рік випуску:</strong> 2023</p>
                         <p><strong>Розробник:</strong> Valve</p>
@@ -620,9 +901,31 @@
                         <p>Терористи в Counter-Strike представляють різні терористичні угруповання з усього світу, кожне з яких має свою унікальну зовнішність та історію.</p>
                     `;
                     break;
+                case 'counter-terrorist':
+                    title = 'Контр-терорист';
+                    content = `
+                        <div class="modal-character-image">
+                            <div class="image-placeholder" style="display: flex; justify-content: center; align-items: center; height: 100%; color: var(--secondary-text);">Зображення Контр-терориста</div>
+                        </div>
+                        <p><strong>Гра:</strong> Counter-Strike 2</p>
+                        <p><strong>Рік випуску:</strong> 2023</p>
+                        <p><strong>Розробник:</strong> Valve</p>
+                        <p><strong>Особливості:</strong></p>
+                        <ul>
+                            <li>Елітний боець спецпідрозділу</li>
+                            <li>Спеціалізується на нейтралізації терористів</li>
+                            <li>Знешкоджує бомби та рятує заручників</li>
+                            <li>Високий рівень координації з командою</li>
+                        </ul>
+                        <p>Контр-терористи представляють елітні спецпідрозділи з усього світу, такі як SAS, SEAL Team 6, GSG-9 та інші. Відрізняються високою дисципліною та координацією.</p>
+                    `;
+                    break;
                 case 'jonesy':
                     title = 'Джонсі';
                     content = `
+                        <div class="modal-character-image">
+                            <div class="image-placeholder" style="display: flex; justify-content: center; align-items: center; height: 100%; color: var(--secondary-text);">Зображення Джонсі</div>
+                        </div>
                         <p><strong>Гра:</strong> Fortnite</p>
                         <p><strong>Рік випуску:</strong> 2017</p>
                         <p><strong>Розробник:</strong> Epic Games</p>
@@ -636,9 +939,31 @@
                         <p>Джонсі - не просто скін, а культова фігура в спільноті Fortnite. Він став настільки популярним, що з'явився в численних медіа та мерчі.</p>
                     `;
                     break;
+                case 'peely':
+                    title = 'Пілі';
+                    content = `
+                        <div class="modal-character-image">
+                            <div class="image-placeholder" style="display: flex; justify-content: center; align-items: center; height: 100%; color: var(--secondary-text);">Зображення Пілі</div>
+                        </div>
+                        <p><strong>Гра:</strong> Fortnite</p>
+                        <p><strong>Рік випуску:</strong> 2019</p>
+                        <p><strong>Розробник:</strong> Epic Games</p>
+                        <p><strong>Особливості:</strong></p>
+                        <ul>
+                            <li>Антропоморфний банан</li>
+                            <li>Має різні варіації (згорнутий, в костюмі агента тощо)</li>
+                            <li>Культовий персонаж спільноти Fortnite</li>
+                            <li>Часто з'являється в спеціальних заходах</li>
+                        </ul>
+                        <p>Пілі став одним з найвпізнаваніших персонажів Fortnite завдяки своєму незвичайному дизайну. Він з'являвся в різних формах і костюмах, що робить його універсальним персонажем для різних сезонів гри.</p>
+                    `;
+                    break;
                 case 'franklin':
                     title = 'Франклін Клінтон';
                     content = `
+                        <div class="modal-character-image">
+                            <div class="image-placeholder" style="display: flex; justify-content: center; align-items: center; height: 100%; color: var(--secondary-text);">Зображення Франкліна Клінтона</div>
+                        </div>
                         <p><strong>Гра:</strong> Grand Theft Auto V</p>
                         <p><strong>Рік випуску:</strong> 2013</p>
                         <p><strong>Розробник:</strong> Rockstar Games</p>
@@ -652,25 +977,31 @@
                         <p>Франклін представляє молоде покоління злочинців, які намагаються піднятися з низів соціуму. Його історія демонструє складність вибору між злочинним життям і легальним шляхом.</p>
                     `;
                     break;
-                case 'john':
-                    title = 'Джон Марстон';
+                case 'michael':
+                    title = 'Майкл Де Санта';
                     content = `
-                        <p><strong>Гра:</strong> Red Dead Redemption</p>
-                        <p><strong>Рік випуску:</strong> 2010</p>
+                        <div class="modal-character-image">
+                            <div class="image-placeholder" style="display: flex; justify-content: center; align-items: center; height: 100%; color: var(--secondary-text);">Зображення Майкла Де Санта</div>
+                        </div>
+                        <p><strong>Гра:</strong> Grand Theft Auto V</p>
+                        <p><strong>Рік випуску:</strong> 2013</p>
                         <p><strong>Розробник:</strong> Rockstar Games</p>
                         <p><strong>Особливості:</strong></p>
                         <ul>
-                            <li>Колишній злочинець, який намагається виправити помилки минулого</li>
-                            <li>Майстерний стрілець</li>
-                            <li>Наставник Артура Моргана</li>
-                            <li>Головний герой першої Red Dead Redemption</li>
+                            <li>Колишній професійний злочинець</li>
+                            <li>Перебуває під програмою захисту свідків</li>
+                            <li>Спеціалізується на стрілянині з повітря</li>
+                            <li>Намагається вести звичайне сімейне життя</li>
                         </ul>
-                        <p>Джон Марстон - трагічний герой, який намагається втекти від свого минулого, але змушений повернутися до навичок злочинця, щоб захистити свою сім'ю. Його історія досліджує теми спокути та наслідків минулих вчинків.</p>
+                        <p>Майкл - складний персонаж, який намагається втекти від свого минулого, але не може повністю відмовитися від злочинного життя. Його стосунки з сім'єю становлять важливу частину його сюжетної арки.</p>
                     `;
                     break;
                 case 'specialist':
                     title = 'Спіціаліст';
                     content = `
+                        <div class="modal-character-image">
+                            <div class="image-placeholder" style="display: flex; justify-content: center; align-items: center; height: 100%; color: var(--secondary-text);">Зображення Спіціаліста</div>
+                        </div>
                         <p><strong>Гра:</strong> Call of Duty</p>
                         <p><strong>Рік випуску:</strong> 2003 (серія)</p>
                         <p><strong>Розробник:</strong> Infinity Ward, Treyarch, Sledgehammer Games</p>
@@ -684,6 +1015,158 @@
                         <p>Спіціалісти в Call of Duty представляють елітних солдатів з різних країн та спецпідрозділів. Вони є уособленням професійних якостей сучасних солдатів - дисциплінованість, підготовка та відданість місії.</p>
                     `;
                     break;
+                case 'price':
+                    title = 'Капітан Прайс';
+                    content = `
+                        <div class="modal-character-image">
+                            <div class="image-placeholder" style="display: flex; justify-content: center; align-items: center; height: 100%; color: var(--secondary-text);">Зображення Капітана Прайса</div>
+                        </div>
+                        <p><strong>Гра:</strong> Call of Duty</p>
+                        <p><strong>Рік випуску:</strong> 2003 (перша поява)</p>
+                        <p><strong>Розробник:</strong> Infinity Ward</p>
+                        <p><strong>Особливості:</strong></p>
+                        <ul>
+                            <li>Легендарний командир SAS</li>
+                            <li>Бере участь у найнебезпечніших операціях</li>
+                            <li>Має характерні вуса і берет</li>
+                            <li>З'являється в багатьох іграх серії</li>
+                        </ul>
+                        <p>Капітан Прайс - один з найвідоміших персонажів серії Call of Duty. Він з'являвся в різних іграх серії, часто як командир головного героя. Його характерні вуса і берет стали його візитною карткою.</p>
+                    `;
+                    break;
+                case 'geralt':
+                    title = 'Геральт з Рівії';
+                    content = `
+                        <div class="modal-character-image">
+                            <div class="image-placeholder" style="display: flex; justify-content: center; align-items: center; height: 100%; color: var(--secondary-text);">Зображення Геральта</div>
+                        </div>
+                        <p><strong>Гра:</strong> The Witcher</p>
+                        <p><strong>Рік випуску:</strong> 2007 (перша гра)</p>
+                        <p><strong>Розробник:</strong> CD Projekt Red</p>
+                        <p><strong>Особливості:</strong></p>
+                        <ul>
+                            <li>Відьмак, мутант і мисливець на монстрів</li>
+                            <li>Володіє надприродними здібностями</li>
+                            <li>Майстерно володіє мечем</li>
+                            <li>Знається на зіллярстві</li>
+                        </ul>
+                        <p>Геральт з Рівії - головний герой серії ігор та книг "Відьмак". Він відьмак, мутант, який спеціалізується на знищенні монстрів. Володіє надприродними здібностями, майстерно володіє мечем і знається на зіллярстві.</p>
+                    `;
+                    break;
+                case 'ciri':
+                    title = 'Цірілла';
+                    content = `
+                        <div class="modal-character-image">
+                            <div class="image-placeholder" style="display: flex; justify-content: center; align-items: center; height: 100%; color: var(--secondary-text);">Зображення Цірілли</div>
+                        </div>
+                        <p><strong>Гра:</strong> The Witcher</p>
+                        <p><strong>Рік випуску:</strong> 2015 (The Witcher 3)</p>
+                        <p><strong>Розробник:</strong> CD Projekt Red</p>
+                        <p><strong>Особливості:</strong></p>
+                        <ul>
+                            <li>Дитя-несподіванка, прийомна дочка Геральта</li>
+                            <li>Володіє могутніми здібностями</li>
+                            <li>Здатна подорожувати в часі та просторі</li>
+                            <li>Ключова фігура в боротьбі за світ</li>
+                        </ul>
+                        <p>Цірілла, також відома як Цірі, - прийомна дочка Геральта. Вона є дитимою-несподіванкою і володіє могутніми здібностями, включаючи здатність подорожувати в часі та просторі. Є ключовою фігурою в боротьбі за світ.</p>
+                    `;
+                    break;
+                case 'dragonborn':
+                    title = 'Довакін';
+                    content = `
+                        <div class="modal-character-image">
+                            <div class="image-placeholder" style="display: flex; justify-content: center; align-items: center; height: 100%; color: var(--secondary-text);">Зображення Довакіна</div>
+                        </div>
+                        <p><strong>Гра:</strong> The Elder Scrolls V: Skyrim</p>
+                        <p><strong>Рік випуску:</strong> 2011</p>
+                        <p><strong>Розробник:</strong> Bethesda Game Studios</p>
+                        <p><strong>Особливості:</strong></p>
+                        <ul>
+                            <li>Обранець долі, народжений з кров'ю драконів</li>
+                            <li>Володіє унікальною здатністю використовувати голос драконів - Ту'ум</li>
+                            <li>Єдиний, хто може зупинити Алдуїна</li>
+                            <li>Може належати до різних рас та мати різні навички</li>
+                        </ul>
+                        <p>Довакін - головний герой гри The Elder Scrolls V: Skyrim. Він є обраним, народженим з кров'ю драконів, і володіє унікальною здатністю використовувати голос драконів - Ту'ум. Єдиний, хто може зупинити Алдуїна, Світлоїдця.</p>
+                    `;
+                    break;
+                case 'vault-boy':
+                    title = 'Хлопчик-сховище';
+                    content = `
+                        <div class="modal-character-image">
+                            <div class="image-placeholder" style="display: flex; justify-content: center; align-items: center; height: 100%; color: var(--secondary-text);">Зображення Хлопчика-сховище</div>
+                        </div>
+                        <p><strong>Гра:</strong> Fallout</p>
+                        <p><strong>Рік випуску:</strong> 1997 (перша гра)</p>
+                        <p><strong>Розробник:</strong> Interplay Entertainment, Bethesda Game Studios</p>
+                        <p><strong>Особливості:</strong></p>
+                        <ul>
+                            <li>Талісман серії Fallout</li>
+                            <li>Зображується в різних ситуаціях для демонстрації ігрових механік</li>
+                            <li>Символ післяядерного оптимізму</li>
+                            <li>Представник всесвіту Vault-Tec</li>
+                        </ul>
+                        <p>Хлопчик-сховище - талісман серії Fallout. Він зображується в різних ситуаціях для демонстрації ігрових механік. Є символом післяядерного оптимізму та виживання. Представник всесвіту Vault-Tec.</p>
+                    `;
+                    break;
+                case 'shepard':
+                    title = 'Командер Шепард';
+                    content = `
+                        <div class="modal-character-image">
+                            <div class="image-placeholder" style="display: flex; justify-content: center; align-items: center; height: 100%; color: var(--secondary-text);">Зображення Командера Шепарда</div>
+                        </div>
+                        <p><strong>Гра:</strong> Mass Effect</p>
+                        <p><strong>Рік випуску:</strong> 2007</p>
+                        <p><strong>Розробник:</strong> BioWare</p>
+                        <p><strong>Особливості:</strong></p>
+                        <ul>
+                            <li>Головний герой серії Mass Effect</li>
+                            <li>Легендарний командир космічного корабля "Нормандія"</li>
+                            <li>Єдиний, хто може об'єднати галактику проти загрози Жнеців</li>
+                            <li>Може бути чоловічої або жіночої статі</li>
+                        </ul>
+                        <p>Командер Шепард - головний герой серії Mass Effect. Він є легендарним командиром космічного корабля "Нормандія" і єдиним, хто може об'єднати галактику проти загрози Жнеців. Може бути чоловічої або жіночої статі, залежно від вибору гравця.</p>
+                    `;
+                    break;
+                case 'ezio':
+                    title = 'Еціо Аудіторе';
+                    content = `
+                        <div class="modal-character-image">
+                            <div class="image-placeholder" style="display: flex; justify-content: center; align-items: center; height: 100%; color: var(--secondary-text);">Зображення Еціо Аудіторе</div>
+                        </div>
+                        <p><strong>Гра:</strong> Assassin's Creed</p>
+                        <p><strong>Рік випуску:</strong> 2009 (перша поява)</p>
+                        <p><strong>Розробник:</strong> Ubisoft</p>
+                        <p><strong>Особливості:</strong></p>
+                        <ul>
+                            <li>Один з найвідоміших ассасинів в історії ордену</li>
+                            <li>Пройшов шлях від юнака-аристократа до мудрого Ментіора</li>
+                            <li>Відродив орден ассасинів в Італії</li>
+                            <li>Має характерний білий костюм ассасина</li>
+                        </ul>
+                        <p>Еціо Аудіторе - один з найвідоміших ассасинів в історії ордену. Він пройшов шлях від юнака-аристократа до мудрого Ментіора, відроджуючи орден ассасинів в Італії. Має характерний білий костюм ассасина.</p>
+                    `;
+                    break;
+                case 'link':
+                    title = 'Лінк';
+                    content = `
+                        <div class="modal-character-image">
+                            <div class="image-placeholder" style="display: flex; justify-content: center; align-items: center; height: 100%; color: var(--secondary-text);">Зображення Лінка</div>
+                        </div>
+                        <p><strong>Гра:</strong> The Legend of Zelda</p>
+                        <p><strong>Рік випуску:</strong> 1986 (перша гра)</p>
+                        <p><strong>Розробник:</strong> Nintendo</p>
+                        <p><strong>Особливості:</strong></p>
+                        <ul>
+                            <li>Обраний герой, який з'являється в різних втіленнях</li>
+                            <li>Захищає королівство Хайрюл від сил зла</li>
+                            <li>Володіє Мечем Погаю, що знищує зло</li>
+                            <li>Часто супроводжується принцесою Зельдою</li>
+                        </ul>
+                        <p>Лінк - головний герой серії The Legend of Zelda. Він є обраним героем, який з'являється в різних втіленнях, щоб захистити королівство Хайрюл від сил зла. Володіє Мечем Погаю, що знищує зло, і часто супроводжується принцесою Зельдою.</p>
+                    `;
+                    break;
                 default:
                     title = 'Персонаж';
                     content = `<p>Інформація про цього персонажа готується до публікації.</p>`;
@@ -694,6 +1177,41 @@
             modal.style.display = 'block';
             document.body.style.overflow = 'hidden';
         }
+
+        // Фільтрація персонажів за грою
+        document.addEventListener('DOMContentLoaded', function() {
+            const gameButtons = document.querySelectorAll('.game-button');
+            const characterCards = document.querySelectorAll('.character-card');
+            
+            gameButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Видаляємо активний клас з усіх кнопок
+                    gameButtons.forEach(btn => btn.classList.remove('active'));
+                    // Додаємо активний клас до поточної кнопки
+                    this.classList.add('active');
+                    
+                    const game = this.getAttribute('data-game');
+                    
+                    // Фільтруємо картки персонажів
+                    characterCards.forEach(card => {
+                        if (game === 'all' || card.getAttribute('data-game') === game) {
+                            card.classList.remove('hidden');
+                        } else {
+                            card.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+        });
+
+        // Паралакс ефект для героя
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+            const parallaxElement = document.querySelector('.hero');
+            const rate = scrolled * 0.5;
+            
+            parallaxElement.style.backgroundPosition = 'center ' + parseInt(rate) + 'px';
+        });
     </script>
 </body>
 </html>
